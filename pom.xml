@@ -8,7 +8,6 @@
     <artifactId>SpeechModulation</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>SpeechModulation</name>
-
     <parent>
         <groupId>org.openimaj</groupId>
         <artifactId>openimaj-tutorial-parent</artifactId>
