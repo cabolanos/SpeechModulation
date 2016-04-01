@@ -15,24 +15,17 @@ public class AudioProcessor {
     }
 
     public void process() {
-        final JavaSoundAudioGrabber jsag = new JavaSoundAudioGrabber(
-                new AudioFormat(16, 44.1, 1));
-        new Thread(jsag).start();
-        // Let's create 30ms windows with 10ms overlap
-        final FixedSizeSampleAudioProcessor fssap = new FixedSizeSampleAudioProcessor(jsag, 441 * 3, 441);
-        // Create the Fourier transform processor chained to the audio decoder
-        final MFCC mfcc = new MFCC(fssap);
-        // Create a visualisation to show our FFT and open the window now
-
-        final BarVisualisation bv = new BarVisualisation(400, 200);
-        bv.setAxisLocation(100);
-        bv.showWindow("MFCCs");
-        // Loop through the sample chunks from the audio capture thread
-        // sending each one through the feature extractor and displaying
-        // the results in the visualisation.
+        JavaSoundAudioGrabber soundAudioGrabber = new JavaSoundAudioGrabber(new AudioFormat(16, 44.1, 1));
+        Thread t = new Thread(soundAudioGrabber);
+        t.start();
+        FixedSizeSampleAudioProcessor sampleAudioProcessor = new FixedSizeSampleAudioProcessor(soundAudioGrabber, 441 * 3, 441);
+        MFCC mfcc = new MFCC(sampleAudioProcessor);
+        BarVisualisation visualisation = new BarVisualisation(500, 300);
+        visualisation.setAxisLocation(100);
+        visualisation.showWindow("Test de datos");
         while (mfcc.nextSampleChunk() != null) {
-            final double[][] mfccs = mfcc.getLastCalculatedFeatureWithoutFirst();
-            bv.setData(mfccs[0]);
+            double[][] featureList = mfcc.getLastCalculatedFeatureWithoutFirst();
+            visualisation.setData(featureList[0]);
         }
     }
 }
